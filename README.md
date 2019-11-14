@@ -1,8 +1,20 @@
+# Requirements
+
+Avant de se lancer dans l'execution du code, il faut installer les bibliotheques necessaires.
+Je vous ai mis un fichier `requirements.txt`.
+Pour l'utiliser, que vous etes sur **PyCharm** ou **Anaconda**, rendez-vous dans le terminal
+
+```terminal
+(venv_noninherited) C:\Users\Amine\PycharmProjects\Py-Labs>pip install -r requirements.txt
+```
+
+Assurez-vous que vous etes dans votre environnement virtuel (pour mon cas c'est `venv_noninherited`)
+
 # Labs-Python
 
 Ce répertoire github comporte tous les projets Labs-Python, avec l’intégralité du code utilise et des bibliothèques mises en œuvre avec des commentaires et des explications du contenus utilisés.
 
-Les scripts sont codee sur **PyCharm Professional 2019.2** avec l'interpréteur **Python 3.8 stable**.
+Les scripts sont codee sur **PyCharm Professional 2019.2** avec l'interpréteur **Python 3.7 stable**.
 
    Vous pouvez télécharger :
         [PyCharm Professional Student](https://www.jetbrains.com/student/) / [Python 3.7]( https://www.python.org/ftp/python/3.7.0/python-3.7.0-amd64.exe)
@@ -191,6 +203,114 @@ print(y)
  -2.3947699069999997,
  ...]
  ```
- Et voila, on a obtenu nos vecteurs coordonnees x et y qu'on peut plotter apres.
+ Et voilà, on a obtenu nos vecteurs coordonnées x et y qu'on peut ploter après.
  
- # Lab 2 - Un UI pour le Lab 1 *(Qt Designer - PyQt)*
+ # Lab 2 - Un UI pour le Lab 1 *(Qt Creator - PyQt)*
+ 
+Nous reprendrons le Lab 1 mais cette fois ci on ajoutera une interface utilisateur a l’aide de Qt Creator.
+
+## Qt
+
+Une **API orientée objet et développée en C++**, conjointement par **The Qt Company** et **Qt Project**. Qt offre des composants d'interface graphique (widgets), d'accès aux données, de connexions réseaux, de gestion des fils d'exécution, d'analyse XML, etc.
+L’API Qt nous permettra de créer notre interface graphique a l’aide de son studio Qt Creator, je ne vais pas trop détailler cette partie-là, le fichier `.ui` pour toutes questions concernant l’interface veuillez me contacter.
+
+## Python and Qt Compatibility
+
+Qt et une bibliothèque développée en C++ mais il existe une implémentation Python en utilisant PyQt.
+Pour l’installer sur PyCharm il suffit de passer par les paramètres d’interpréteur, sinon exécuter cette commande.
+
+```terminal
+pip install PyQt
+```
+
+### Initier la forme
+
+Les formes dans python sont initiées comme des instances de classe, pour Qt c’est la classe MainWindow qui sera utilisée
+
+```python
+# On importe les différents modules et classe de la bibliothèque PyQt
+from PyQt5 import QtWidgets, uic, QtGui, QtCore
+
+# Comme dans le script precedent on declare une classe MainWindow
+# Ce pendant ca sera un petit peut different on ajoutera le QtWidgets.QMainWindow
+class MainWindow(QtWidgets.QMainWindow):
+
+# Toute classe doit être initiée
+    def __init__(self, *args, **kwargs):
+
+        # Méthode super utilisateur pour accéder a la classe et l’initier
+        super(MainWindow, self).__init__(*args, **kwargs)
+        
+        # La meilleure façon que j’ai trouve pour charger l’ui est d’utiliser ‘uic.loadUi’
+        uic.loadUi('main1.ui', self)
+
+def main():
+  
+    # On initialise l’application et notre iterface
+    app = QtWidgets.QApplication(sys.argv)
+    main = MainWindow()
+    main.show()
+    sys.exit(app.exec_())
+
+
+if __name__ == '__main__':
+    main()
+```
+### Let's do much more - Widget connection
+
+Bon, on a juste affiché la forme il nous reste à connecter nos widgets (QPushButton, QWidgets …) avec leurs fonctions que nous allons définir nous-même.
+
+Qt Creator propose une méthode assez simple mais que je vois inutile, c’est la méthode signals/slots qui assigne le signal émis par le widget vers un slot ou une méthode.
+
+> Pour savoir les différents signals qu’un widget peut émettre référez-vous a la [documentation QT]( https://doc.qt.io/).
+
+Nous n’allons pas tous voir mais juste quelque type de connections utilisées dans le script.
+
+#### Un QPushButton
+
+```python
+# On commence toujours par un ‘self’ car pour connecter un QWidget on doit le faire dans la 
+# méthode __init__ de la classe MainWindow déjà créé
+# self.le_nom_du_widget.le_signal.connect(ma_fonction)
+self.plotBtn.clicked.connect(self.onCLicked_Plot)
+
+# On cree notre function dans la classe MainWindow toujours
+def onCLicked_Plot(self):
+    # mon code
+```
+Ici on a connecté le bouton a notre fonction onClicked_Plot.
+
+### Un QLineEdit / QComboBox
+
+```python
+self.Gate_P1_x.textChanged.connect(self.onTextChanged)
+self.tb_id.currentTextChanged.connect(self.onChangedVal)
+
+def onTextChanged(self):
+    # mon code
+
+def onChangedVal(self):
+    # mon code
+```
+Ici on a connete le changement de text dans un QLineEdit et le changement de valeur dans le QComboBox.
+
+> Vous trouvez tous les signaux [ici]( https://doc.qt.io/).
+
+### Le self.sender()
+Dans plusieurs cas (exemple : si on affecte une seule fonction sur plusieurs QWidgets) on a besoin de connaitre exactement l’objet qui a enclenche le signal pour qu’il soit le seul à subir les changements.
+PyQt propose une procédure qui est `self.sender()` qui retourne un QWidget.
+
+```python
+obj = self.sender()
+```
+Et donc il sera facile de se pointer sur `obj` et d’interagir avec lui.
+
+### Mais bon y’a un truc bizarre dans le *.ui*
+
+Ne vous inquiétez pas on en viendra, c’est le PlotWidget.
+
+Pour ploter, PyQt n’est pas compatible avec matplotlib (pour créer des plots en temps réel), on a utilisé `pyqtgraph` une bibliothèque super puissante, juste pour créer un objet pour ploter dessus.
+
+Il faut créer un QWidget simple puis l’élever en une autre classe, cela veut dire qu’on creera une sous classe PlotWidget qui prendra en compte les attributs et méthodes de `QWidget` de Qt et aussi de `PlotWidget` de pyqtgraph, et on travaillera dessus.
+
+> Pour plus d’info voici la [doc pyqtgraph]( http://www.pyqtgraph.org/documentation/)
