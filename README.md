@@ -352,4 +352,78 @@ CREATE TABLE TAB2 (
 ## Import des donnees CSV dans `sqlitestudio`
 
 L'import des donnees d'un csv a un .db ou n'importe quelle base SQL est assez simple :
-![image](https://ensameu-my.sharepoint.com/:i:/g/personal/mohammed_amine_idrissi_taghki_ensam_eu/Eb9i4hWqc11Lgk3Fxqh0JwcBvlTiuS-wej5SC0v66AGYlw?e=2cXsjd)
+![image](https://raw.githubusercontent.com/AmineId/Labs-Python/master/img/4.png)
+On choisit la table a remplir
+![image](https://raw.githubusercontent.com/AmineId/Labs-Python/master/img/5.png)
+et on importe notre `csv`
+![image](https://raw.githubusercontent.com/AmineId/Labs-Python/master/img/6.png)
+
+## Optimiser les requetes SQL
+
+SQL est un langage tres simple pour les requetes de traitements de donnees, sauf que pour chaque requete le langage doit balayer toute la table où des fois ca s'avere lent.
+
+Une methode pour optimiser l'execution des requete et l'utilisation des `index`
+
+### C'est quoi un `index`
+
+#### Analogie pour comprendre les index en SQL
+
+Un index, dans le domaine bibliographique, permet de lister les mots-clés importants abordés dans un ouvrage et d’indiquer les pages où le mot est mentionné. Ainsi, un lecteur qui recherche une thématique spécifique peut se baser sur cet index pour trouver les pages qui abordent le sujet. Ainsi un index est une ressource non indispensable, mais c’est un un gain de temps terrible pour l’utilisateur qui accède facilement à l’information recherchée.
+
+#### Index en SQL
+
+Un index, dans une base de données se base sur le même principe qu’un index dans un livre. Avec un index placé sur une ou plusieurs colonnes le système d’une base de données peut rechercher les données d’abord sur l’index et s’il trouve ce qu’il cherche il saura plus rapidement où se trouve les enregistrements concernés.
+
+Ces petites ressources ont toutefois leurs inconvénients car cela occupe de l’espace supplémentaire dans la base de données. Par ailleurs, l’insertion de données est plus long car les index sont mis à jour à chaque fois que des données sont insérées.
+
+#### Inserons les `index` dans notre table
+
+Pour mettre des index dans notre base de donnees, on utilise la sytaxe
+
+```sql
+CREATE INDEX mon_index ON ma_table
+```
+
+![image](https://raw.githubusercontent.com/AmineId/Labs-Python/master/img/7.png)
+
+> Cela prendra du temps selon la performance de votre pc.
+
+## Connection `python`et `sql`
+
+Bon passons a la connection des notre base sur python.
+Comme toutes les bases de donnees, il faut creer une connection sql, s'y connecter et excecuter les requetes
+
+```python
+import sqlite3
+
+# Nous mettrons notre base de donnees dans le meme dossier de notre script
+connection = sqlite3.connect('myBD.db')
+
+# Nous creerons ensuite un curseur
+cursor = connection.cursor()
+
+# Nous executons notre premiere requete : SELECT * FROM TAB WHERE id LIKE 1
+cursor.execute('SELECT * FROM TAB WHERE id LIKE 1')
+
+# Nous recuillons la data
+date = cursor.fetchall()
+
+print(date)
+```
+
+```python terminal
+[(1, '02/06/2019 15:30', 47.24713898, -2.369469881),
+ (1, '02/06/2019 15:45', 47.23698044, -2.377209902),
+ (1, '02/06/2019 16:00', 47.2342186, -2.393909931),
+ (1, '02/06/2019 16:05', 47.23377991, -2.382839918),
+ (1, '02/06/2019 16:10', 47.23715973, -2.386699915),
+ (1, '02/06/2019 16:15', 47.23563004, -2.391200066),
+ (1, '02/06/2019 16:20', 47.23147964, -2.383949995),
+ (1, '02/06/2019 16:25', 47.23160934, -2.383539915),
+ (1, '02/06/2019 16:30', 47.2279892, -2.394769907),
+ (1, '02/06/2019 16:35', 47.2253418, -2.405989885),
+ ...]
+ ```
+ `data` est une list avec plusieurs tuple de longueur 4 (4 colonnes : id, date, latitude, longitude)
+ 
+ > Toutes [les requetes sql](https://sql.sh/cours)
