@@ -314,3 +314,42 @@ Pour ploter, PyQt n’est pas compatible avec matplotlib (pour créer des plots 
 Il faut créer un QWidget simple puis l’élever en une autre classe, cela veut dire qu’on creera une sous classe PlotWidget qui prendra en compte les attributs et méthodes de `QWidget` de Qt et aussi de `PlotWidget` de pyqtgraph, et on travaillera dessus.
 
 > Pour plus d’info voici la [doc pyqtgraph]( http://www.pyqtgraph.org/documentation/)
+
+# Lab 3 - SQL for better performance
+
+Ce lab est complementaire au Lab2-ui, en fait il est deja inclu dedans.
+On se focalisera sur les bases de donnees SQL et se familiariser avec les requetes SQL.
+
+Au tout debut nous allons creer notre base de donnees sur `sqlitestudio` (selon votre os : [Win_32](https://sqlitestudio.pl/files/sqlitestudio3/complete/win32-inst/InstallSQLiteStudio-3.2.1.exe) / [Mac](https://sqlitestudio.pl/files/sqlitestudio3/complete/macosx-inst/InstallSQLiteStudio-3.2.1.dmg)
+
+Voici les requetes a executer
+```sql
+CREATE TABLE TAB (
+   id integer,
+   date date,
+   latitude real,
+   longitude real
+   )
+```
+
+Cette requete `CREATE TABLE` va creer une table dans notre base de donnees avec 4 colonnes (id, date, latitude, longitude), le `integer`, `date`et `real`ce sont les types de donnees qui peuvent etre stockees dans chaque colonne.
+
+> ATTENTION : a l'avance vous devez creer une base vide dans sqlitestudio 
+> ![image](https://raw.githubusercontent.com/AmineId/Labs-Python/master/img/1.png)
+> ![image](https://raw.githubusercontent.com/AmineId/Labs-Python/master/img/2.png)
+> Ne pas oublier de connecter la base avant d'executer les requetes.
+> ![image](https://raw.githubusercontent.com/AmineId/Labs-Python/master/img/3.png)
+
+On creera une autre table de la meme maniere
+
+```sql
+CREATE TABLE TAB2 (
+   id integer,
+   nom text
+   )
+```
+
+## Import des donnees CSV dans `sqlitestudio`
+
+L'import des donnees d'un csv a un .db ou n'importe quelle base SQL est assez simple :
+![image](https://ensameu-my.sharepoint.com/:i:/g/personal/mohammed_amine_idrissi_taghki_ensam_eu/Eb9i4hWqc11Lgk3Fxqh0JwcBvlTiuS-wej5SC0v66AGYlw?e=2cXsjd)
